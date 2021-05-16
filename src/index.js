@@ -209,7 +209,7 @@ const DateRangePicker = ({
   useEffect(() => {
     if (typeof open === "boolean") {
       if (open && !isOpen) onOpen();
-      else if (!open && isOpen) onClose();
+      else if (!open && isOpen) _onClose();
     }
   }, [open]);
 
