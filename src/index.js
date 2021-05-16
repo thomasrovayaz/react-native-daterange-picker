@@ -324,12 +324,12 @@ const DateRangePicker = ({
   return (
     <View>
       <Modal
-          animationType="fade"
-          transparent={true}
-          visible={isOpen}
-          onRequestClose={() => {
-            _onClose();
-          }}
+        animationType="slide"
+        transparent={true}
+        visible={isOpen}
+        onRequestClose={() => {
+          _onClose();
+        }}
       >
         <View style={mergedStyles.backdrop}>
           <TouchableWithoutFeedback
