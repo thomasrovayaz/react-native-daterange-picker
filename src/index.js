@@ -8,6 +8,7 @@ import {
   TouchableWithoutFeedback,
   View,
   Image,
+  Modal,
 } from "react-native";
 import Button from "./components/Button";
 import Day from "./components/Day";
@@ -47,6 +48,7 @@ const DateRangePicker = ({
   buttonTextStyle,
   presetButtons,
   open,
+  onClose
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [weeks, setWeeks] = useState([]);
@@ -78,10 +80,6 @@ const DateRangePicker = ({
       ...styles.buttonContainer,
       ...buttonContainerStyle,
     },
-    monthButtons: {
-      ...styles.monthButtons,
-      ...monthButtonsStyle,
-    },
   };
 
   const _onOpen = () => {
@@ -89,14 +87,10 @@ const DateRangePicker = ({
   };
 
   const _onClose = () => {
-    if (typeof open !== "boolean") onClose();
-  };
-
-  const onOpen = () => {
-    setIsOpen(true);
-  };
-
-  const onClose = () => {
+    if (onClose) {
+      onClose();
+    }
+    if (typeof open !== "boolean") return;
     setIsOpen(false);
     setSelecting(false);
     if (!endDate) {
@@ -104,6 +98,10 @@ const DateRangePicker = ({
         endDate: startDate,
       });
     }
+  };
+
+  const onOpen = () => {
+    setIsOpen(true);
   };
 
   const previousMonth = () => {
@@ -323,84 +321,91 @@ const DateRangePicker = ({
     </View>
   );
 
-  return isOpen ? (
-    <>
-      <View style={mergedStyles.backdrop}>
-        <TouchableWithoutFeedback
-          style={styles.closeTrigger}
-          onPress={_onClose}
-        >
-          <View style={styles.closeContainer} />
-        </TouchableWithoutFeedback>
-        <View>
-          <View style={mergedStyles.container}>
-            <View style={styles.header}>
-              <TouchableOpacity onPress={previousMonth}>
-                {monthPrevButton || (
-                  <Image
-                    resizeMode="contain"
-                    style={mergedStyles.monthButtons}
-                    source={chevronL}
-                  ></Image>
-                )}
-              </TouchableOpacity>
-              <Text style={mergedStyles.headerText}>
-                {displayedDate.format("MMMM") +
-                  " " +
-                  displayedDate.format("YYYY")}
-              </Text>
-              <TouchableOpacity onPress={nextMonth}>
-                {monthNextButton || (
-                  <Image
-                    resizeMode="contain"
-                    style={mergedStyles.monthButtons}
-                    source={chevronR}
-                  />
-                )}
-              </TouchableOpacity>
-            </View>
-            <View style={styles.calendar}>
-              {dayHeaders && (
-                <View style={styles.dayHeaderContainer}>{dayHeaders}</View>
-              )}
-              {weeks}
-            </View>
-            {presetButtons && (
-              <View style={mergedStyles.buttonContainer}>
-                <Button
-                  buttonStyle={buttonStyle}
-                  buttonTextStyle={buttonTextStyle}
-                  onPress={today}
-                >
-                  Today
-                </Button>
-                {range && (
-                  <>
-                    <Button
-                      buttonStyle={buttonStyle}
-                      buttonTextStyle={buttonTextStyle}
-                      onPress={thisWeek}
-                    >
-                      This Week
-                    </Button>
-                    <Button
-                      buttonStyle={buttonStyle}
-                      buttonTextStyle={buttonTextStyle}
-                      onPress={thisMonth}
-                    >
-                      This Month
-                    </Button>
-                  </>
-                )}
+  return (
+    <View>
+      <Modal
+          animationType="fade"
+          transparent={true}
+          visible={isOpen}
+          onRequestClose={() => {
+            _onClose();
+          }}
+      >
+        <View style={mergedStyles.backdrop}>
+          <TouchableWithoutFeedback
+            style={styles.closeTrigger}
+            onPress={_onClose}
+          >
+            <View style={styles.closeContainer} />
+          </TouchableWithoutFeedback>
+          <View>
+            <View style={mergedStyles.container}>
+              <View style={styles.header}>
+                <TouchableOpacity onPress={previousMonth}>
+                  {monthPrevButton || (
+                    <Image
+                      resizeMode="contain"
+                      style={mergedStyles.monthButtons}
+                      source={chevronL}
+                    ></Image>
+                  )}
+                </TouchableOpacity>
+                <Text style={mergedStyles.headerText}>
+                  {displayedDate.format("MMMM") +
+                    " " +
+                    displayedDate.format("YYYY")}
+                </Text>
+                <TouchableOpacity onPress={nextMonth}>
+                  {monthNextButton || (
+                    <Image
+                      resizeMode="contain"
+                      style={mergedStyles.monthButtons}
+                      source={chevronR}
+                    />
+                  )}
+                </TouchableOpacity>
               </View>
-            )}
+              <View style={styles.calendar}>
+                {dayHeaders && (
+                  <View style={styles.dayHeaderContainer}>{dayHeaders}</View>
+                )}
+                {weeks}
+              </View>
+              {presetButtons && (
+                <View style={mergedStyles.buttonContainer}>
+                  <Button
+                    buttonStyle={buttonStyle}
+                    buttonTextStyle={buttonTextStyle}
+                    onPress={today}
+                  >
+                    Today
+                  </Button>
+                  {range && (
+                    <>
+                      <Button
+                        buttonStyle={buttonStyle}
+                        buttonTextStyle={buttonTextStyle}
+                        onPress={thisWeek}
+                      >
+                        This Week
+                      </Button>
+                      <Button
+                        buttonStyle={buttonStyle}
+                        buttonTextStyle={buttonTextStyle}
+                        onPress={thisMonth}
+                      >
+                        This Month
+                      </Button>
+                    </>
+                  )}
+                </View>
+              )}
+            </View>
           </View>
         </View>
-      </View>
+      </Modal>
       {node}
-    </>
-  ) : (
-    <>{node}</>
+    </View>
   );
 };
 
