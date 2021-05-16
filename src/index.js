@@ -280,7 +280,7 @@ const DateRangePicker = ({
   return (
     <View>
       <Modal
-        animationType="fade"
+        animationType="slide"
         transparent={true}
         visible={open}
         onRequestClose={onClose}
