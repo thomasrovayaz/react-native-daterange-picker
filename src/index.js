@@ -90,7 +90,14 @@ const DateRangePicker = ({
     if (onClose) {
       onClose();
     }
-    if (typeof open !== "boolean") return;
+    if (typeof open !== "boolean") onModalClose();
+  };
+
+  const onOpen = () => {
+    setIsOpen(true);
+  };
+
+  const onModalClose = () => {
     setIsOpen(false);
     setSelecting(false);
     if (!endDate) {
@@ -98,10 +105,6 @@ const DateRangePicker = ({
         endDate: startDate,
       });
     }
-  };
-
-  const onOpen = () => {
-    setIsOpen(true);
   };
 
   const previousMonth = () => {
@@ -209,7 +212,7 @@ const DateRangePicker = ({
   useEffect(() => {
     if (typeof open === "boolean") {
       if (open && !isOpen) onOpen();
-      else if (!open && isOpen) _onClose();
+      else if (!open && isOpen) onModalClose();
     }
   }, [open]);
 
@@ -324,7 +327,7 @@ const DateRangePicker = ({
   return (
     <View>
       <Modal
-        animationType="slide"
+        animationType="fade"
         transparent={true}
         visible={isOpen}
         onRequestClose={() => {
