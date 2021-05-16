@@ -50,7 +50,6 @@ const DateRangePicker = ({
   open,
   onClose
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
   const [weeks, setWeeks] = useState([]);
   const [selecting, setSelecting] = useState(false);
   const [dayHeaders, setDayHeaders] = useState([]);
@@ -80,31 +79,6 @@ const DateRangePicker = ({
       ...styles.buttonContainer,
       ...buttonContainerStyle,
     },
-  };
-
-  const _onOpen = () => {
-    if (typeof open !== "boolean") onOpen();
-  };
-
-  const _onClose = () => {
-    if (onClose) {
-      onClose();
-    }
-    if (typeof open !== "boolean") onModalClose();
-  };
-
-  const onOpen = () => {
-    setIsOpen(true);
-  };
-
-  const onModalClose = () => {
-    setIsOpen(false);
-    setSelecting(false);
-    if (!endDate) {
-      onChange({
-        endDate: startDate,
-      });
-    }
   };
 
   const previousMonth = () => {
@@ -210,13 +184,6 @@ const DateRangePicker = ({
   );
 
   useEffect(() => {
-    if (typeof open === "boolean") {
-      if (open && !isOpen) onOpen();
-      else if (!open && isOpen) onModalClose();
-    }
-  }, [open]);
-
-  useEffect(() => {
     function populateHeaders() {
       let _dayHeaders = [];
       for (let i = 0; i <= 6; ++i) {
@@ -310,34 +277,18 @@ const DateRangePicker = ({
     select,
   ]);
 
-  const node = (
-    <View>
-      <TouchableWithoutFeedback onPress={_onOpen}>
-        {children ? (
-          children
-        ) : (
-          <View>
-            <Text>Click me to show date picker</Text>
-          </View>
-        )}
-      </TouchableWithoutFeedback>
-    </View>
-  );
-
   return (
     <View>
       <Modal
         animationType="fade"
         transparent={true}
-        visible={isOpen}
-        onRequestClose={() => {
-          _onClose();
-        }}
+        visible={open}
+        onRequestClose={onClose}
       >
         <View style={mergedStyles.backdrop}>
           <TouchableWithoutFeedback
             style={styles.closeTrigger}
-            onPress={_onClose}
+            onPress={onClose}
           >
             <View style={styles.closeContainer} />
           </TouchableWithoutFeedback>
@@ -407,7 +358,7 @@ const DateRangePicker = ({
           </View>
         </View>
       </Modal>
-      {node}
+      {children}
     </View>
   );
 };
